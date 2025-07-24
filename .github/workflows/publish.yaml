@@ -1,0 +1,33 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  publish:
+    runs-on: actuated-8cpu-12gb
+    steps:
+      - uses: self-actuated/hub-mirror@master
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Get TAG
+        id: get_tag
+        run: echo TAG=${GITHUB_REF#refs/tags/} >> $GITHUB_ENV
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+
+      - name: Build and push
+        run: |
+          REGISTRY=ghcr.io/openfaasltd BUILD_TAGS=slicer TAG=${{env.TAG}} make ALL_ARCH="amd64 arm64" execute-release
+          REGISTRY=ghcr.io/openfaasltd BUILD_TAGS=slicer TAG=latest make ALL_ARCH="amd64 arm64" execute-release

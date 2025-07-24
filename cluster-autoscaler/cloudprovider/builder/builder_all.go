@@ -48,6 +48,7 @@ import (
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/ovhcloud"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/rancher"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/scaleway"
+	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/slicer"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/tencentcloud"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/utho"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/volcengine"
@@ -161,6 +162,9 @@ func buildCloudProvider(opts *coreoptions.AutoscalerOptions,
 		return utho.BuildUtho(opts, do, rl)
 	case cloudprovider.CoreWeaveProviderName:
 		return coreweave.BuildCoreWeave(opts, do, rl)
+	case cloudprovider.SlicerProviderName:
+		return slicer.BuildSlicer(opts, do, rl)
 	}
+
 	return nil
 }
