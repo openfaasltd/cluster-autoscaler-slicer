@@ -115,13 +115,14 @@ curl -sfL https://get.k3s.io | K3S_URL=%s sh -s - --with-node-id --node-label "s
 	// Create the nodes via API
 	for i := 0; i < delta; i++ {
 		payload := sdk.SlicerCreateNodeRequest{
-			Userdata: userdata,
-			Secrets:  []string{"k3s-token"},
+			Userdata:   userdata,
+			Secrets:    []string{"k3s-token"},
+			Persistent: true,
 		}
 
 		klog.V(2).Infof("Slicer: Creating node via API client")
 
-		result, err := g.apiClient.CreateNode(context.Background(), g.id, payload)
+		result, err := g.apiClient.CreateVM(context.Background(), g.id, payload)
 		if err != nil {
 			klog.Errorf("Slicer: Failed to create node: %v", err)
 			return fmt.Errorf("failed to create node: %w", err)
